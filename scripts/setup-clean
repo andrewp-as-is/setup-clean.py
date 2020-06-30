@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+{ set +x; } 2>/dev/null
+
+usage() {
+    echo "usage: $(basename $0) path" 1>&2
+    [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; exit
+}
+
+[[ $1 == "-h" ]] || [[ $1 == "--help" ]] && usage "$@"
+
+[[ $# != 1 ]] && usage
+
+while [[ $# != 0 ]]; do
+    ! [ -e "$1" ] && echo "ERROR: $1 NOT EXISTS" 1>&2 && exit 1
+    cd "$1" || exit
+    shift
+    [ -d build ] && { rm -r build || exit; }
+    [ -d dist ] && { rm -r dist || exit; }
+    find . -type d -name '*.egg-info' -exec rm -r {} \;
+    find . -type d -name '__pycache__' -exec rm -r {} \;
+    find . -type f -name '*.pyc' -exec rm {} \;
+    find . -type f -name '*.tar.gz' -exec rm {} \;
+    find . -type f -name '*.tgz' -exec rm {} \;
+done;:
+
